@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Teste das 22 máscaras</title>
+<meta name="description" content="Removendo as Máscaras · Imersão 17/10">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Nunito+Sans:wght@400;600;700&display=swap">
+<style>
+:root{
+  --bg:#F2F1EC; --paper:#FFFFFF; --ink:#1E2229; --ink-2:#4B5563; --ink-3:#7B8390;
+  --line:#DCD9D1; --accent:#1E6E62; --accent-soft:#D5E8E3; --accent-ink:#0F4D44;
+  --warn:#8A5A12; --radius:14px;
+  --g-cuidando:#B5654A; --g-dando:#3B6EA5; --g-bem:#7A8B3A; --g-razao:#8A5A9E;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15181D; --paper:#1E2228; --ink:#EDEEF0; --ink-2:#B7BCC5; --ink-3:#7F8792;
+    --line:#2E343C; --accent:#5FB8A8; --accent-soft:#1F3B36; --accent-ink:#BFE6DD; --warn:#E0B15A;
+    --g-cuidando:#E08E70; --g-dando:#78A6DA; --g-bem:#B5C66A; --g-razao:#C394D6;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15181D; --paper:#1E2228; --ink:#EDEEF0; --ink-2:#B7BCC5; --ink-3:#7F8792;
+  --line:#2E343C; --accent:#5FB8A8; --accent-soft:#1F3B36; --accent-ink:#BFE6DD; --warn:#E0B15A;
+  --g-cuidando:#E08E70; --g-dando:#78A6DA; --g-bem:#B5C66A; --g-razao:#C394D6;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:"Fraunces","Iowan Old Style",Georgia,serif;font-weight:700;letter-spacing:-.01em;text-wrap:balance;margin:0}
+main{max-width:560px;margin:0 auto;padding:18px 18px 64px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink)}
+.lead{font-size:18px;color:var(--ink-2);margin:10px 0 0}
+.muted{color:var(--ink-3);font-size:15px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.btn{appearance:none;border:0;border-radius:999px;background:var(--accent);color:#fff;font:inherit;font-weight:700;padding:14px 22px;cursor:pointer;width:100%;font-size:17px}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ghost{background:transparent;color:var(--ink-2);border:1.5px solid var(--line)}
+.link{appearance:none;background:none;border:0;color:var(--ink-3);font:inherit;font-size:15px;cursor:pointer;padding:8px 0;text-decoration:underline}
+.prog{position:sticky;top:0;background:var(--bg);padding:12px 0 10px;z-index:5}
+.prog .row{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-3);margin-bottom:6px}
+.prog .bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden}
+.prog .bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+.q{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px 16px 16px;margin:10px 0}
+.q h2{font-size:23px;line-height:1.25;margin:8px 0 14px}
+.typ{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);background:var(--accent-soft);border-radius:999px;padding:3px 10px}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{border:1.5px solid var(--line);background:var(--paper);color:var(--ink);border-radius:12px;padding:13px 14px;font:inherit;font-size:16px;line-height:1.35;cursor:pointer;text-align:left;display:flex;gap:10px;align-items:flex-start;width:100%}
+.opt .box{flex:0 0 18px;height:18px;border:1.5px solid var(--ink-3);border-radius:5px;margin-top:2px}
+.opt.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-ink)}
+.opt.on .box{background:var(--accent);border-color:var(--accent)}
+.lb{display:block;font-weight:700;font-size:15px;margin:14px 0 6px}
+input,select{width:100%;font:inherit;font-size:16px;padding:12px;border:1.5px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink)}
+.seg{display:flex;gap:8px}
+.seg button{flex:1;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;padding:11px 8px;font:inherit;font-size:15px;cursor:pointer}
+.seg button.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.err{color:var(--warn);font-weight:700}
+.grp{border-left:5px solid var(--gc,var(--accent));padding:14px 14px 12px 14px;margin:10px 0;background:var(--paper);border-radius:12px;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.grp.pick{cursor:pointer;width:100%;text-align:left;font:inherit;color:var(--ink)}
+.grp.pick.on{outline:3px solid var(--accent);outline-offset:2px}
+.grp .gt{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px}
+.mk{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline;padding:3px 0}
+.mk b{font-weight:700}
+.mk span{color:var(--ink-2);font-size:15px}
+.others{font-size:15px;color:var(--ink-3);margin:8px 0 0}
+.choices{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+.barrow{display:grid;grid-template-columns:150px 1fr 44px;gap:10px;align-items:center;margin:7px 0;font-size:15px}
+.barrow .bl{line-height:1.2}
+.barrow .bt{height:12px;background:var(--line);border-radius:6px;overflow:hidden}
+.barrow .bt i{display:block;height:100%;background:var(--gc,var(--accent));border-radius:6px}
+.barrow .bv{text-align:right;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.res h1{font-size:38px;margin:6px 0 4px}
+.anchor{background:var(--accent-soft);color:var(--accent-ink);border-radius:var(--radius);padding:18px;margin:14px 0}
+.anchor .k{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.anchor .f{font-family:"Fraunces",Georgia,serif;font-size:25px;line-height:1.25;margin-top:6px;font-weight:700}
+.note{border:1.5px dashed var(--line);border-radius:12px;padding:12px 14px;color:var(--ink-2);font-size:15.5px;margin:12px 0}
+.sec{margin-top:26px}
+.sec h3{font-size:20px;margin-bottom:8px}
+.back{appearance:none;background:none;border:0;color:var(--ink-3);font:inherit;font-size:14px;cursor:pointer;padding:6px 0}
+/* painel */
+.painel main{max-width:1100px}
+.painel h1{font-size:42px}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+@media (max-width:820px){.pgrid{grid-template-columns:1fr}}
+.big{font-family:"Fraunces",Georgia,serif;font-size:56px;font-weight:700;line-height:1}
+.cloud{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+.cloud span{font-family:"Fraunces",Georgia,serif;font-weight:700;color:var(--accent-ink)}
+.painel .barrow{grid-template-columns:200px 1fr 48px;font-size:16px}
+@media (max-width:480px){.barrow{grid-template-columns:118px 1fr 40px;font-size:14px}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+(function(){
+"use strict";
+
+const SUPABASE_URL = "https://irujsfjzqhfmruurfohl.supabase.co";
+const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydWpzZmp6cWhmbXJ1dXJmb2hsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNTE0MzAsImV4cCI6MjA4OTgyNzQzMH0.T-It7g8ubLwktxkxLQL0ZTYWdvmJ-cec-yKgAxqySpc";
+const EVENTO = "imersao-1710";
+const DEBUG = /[?&]debug=1/.test(location.search);
+
+/* ======================= AS 22 MÁSCARAS ======================= */
+const M = {
+  cuidadora:      {n:"A Cuidadora", ep:4, g:"cuidando", f:"Deixa que eu faço", ev:"a própria carência", irr:"Alguém recusar a sua ajuda: “não precisa, eu me viro”.", an:"Eu não preciso pagar aluguel pra existir.", fr:["Deixa que eu faço","Depois eu me cuido"], con:"Você cuida de todo mundo e esquece de você.", me:"Se eu parar de servir, ninguém vai me ver."},
+  salvadora:      {n:"A Salvadora", ep:13, g:"cuidando", f:"Se não for eu, quem vai?", ev:"a impotência, e não ser necessária", irr:"A pessoa que você ajudou resolver sozinha, do jeito dela.", an:"Ajudar não é andar no lugar do outro.", fr:["Se não for eu, quem vai?","Ele só precisa de alguém que acredite nele"], con:"Você sempre arruma alguém pra salvar.", me:"Se ninguém precisar de mim, eu não sirvo pra nada."},
+  agradavel:      {n:"A Agradável", ep:7, g:"cuidando", f:"Tanto faz, por mim tudo bem", ev:"o medo da rejeição", irr:"Ter que escolher na frente de todo mundo: “decide você!”.", an:"Discordar também é estar presente.", fr:["Tanto faz, o que vocês preferirem","Desculpa"], con:"Você concorda com todo mundo.", me:"Se eu discordar, vão gostar menos de mim."},
+  certinha:       {n:"A Certinha", ep:6, g:"cuidando", f:"O que vão pensar?", ev:"o medo do julgamento", irr:"Alguém furar a regra e se dar bem.", an:"Certo segundo quem?", fr:["O que vão pensar?","Não pega bem"], con:"Você nunca dá trabalho pra ninguém.", me:"Se eu errar, vão me julgar."},
+
+  forte:          {n:"A Forte", ep:9, g:"dando", f:"Tá tudo bem", ev:"a vulnerabilidade e a tristeza", irr:"Gente que reclama de tudo e não faz nada.", an:"Pedir colo não me tira a força.", fr:["Eu dou conta","Chorar não resolve nada"], con:"Você segura tudo e ninguém sabe como você está.", me:"Se eu desabar, não tem ninguém embaixo."},
+  dacontadetudo:  {n:"A que Dá Conta de Tudo", ep:17, g:"dando", f:"Tô morta — mas eu encaixo", ev:"o próprio limite", irr:"O colega que sai no horário e deixa coisa por fazer.", an:"Ter limite não me faz menor.", fr:["Relaxa, eu encaixo","Depois eu descanso"], con:"Você vive exausto e não larga nada.", me:"Se eu disser que não dá, eu valho menos."},
+  autossuficiente:{n:"A Autossuficiente", ep:10, g:"dando", f:"Não precisa, eu resolvo", ev:"o medo de depender", irr:"Ajuda que ninguém pediu — ou ficar devendo favor.", an:"Precisar não me diminui.", fr:["Não precisa, eu resolvo","Não gosto de dever favor pra ninguém"], con:"Você nunca pede nada pra ninguém.", me:"Se eu pedir, vou ficar na mão de alguém."},
+  controladora:   {n:"A Controladora", ep:5, g:"dando", f:"Deixa que eu faço, você faz errado", ev:"o medo e a impotência", irr:"Fazerem errado depois que você explicou direitinho.", an:"O que não depende de mim não é meu pra segurar.", fr:["Deixa que eu faço, você faz errado","Chegou? Me avisa"], con:"Você quer tudo do seu jeito.", me:"Se eu soltar, tudo desanda."},
+  bemsucedida:    {n:"A Bem-sucedida", ep:8, g:"dando", f:"Depois que eu conseguir, eu descanso", ev:"o medo do fracasso", irr:"Perder tempo: reunião que podia ser um e-mail.", an:"Eu não sou o meu resultado.", fr:["Tô na correria, mas tá tudo ótimo","Parar pra quê?"], con:"Você não para nunca.", me:"Se eu parar, eu não sei quem eu sou."},
+  ansiosa:        {n:"A Ansiosa", ep:20, g:"dando", f:"E se…?", ev:"conviver com o não-saber", irr:"Mensagem visualizada e não respondida.", an:"Isso é preparação ou repetição?", fr:["E se der errado?","Me avisa quando chegar"], con:"Você sofre antes de acontecer.", me:"Se eu não pensar em tudo, alguma coisa vai me pegar."},
+
+  espiritualizada:{n:"A Espiritualizada", ep:3, g:"bem", f:"Eu já trabalhei isso em mim", ev:"a raiva, a inveja e o desejo", irr:"Gente “negativa”, que só fala de problema e de raiva.", an:"Sentir raiva não me faz menos espiritual.", fr:["Eu já trabalhei isso em mim","É o processo dele, coitado"], con:"Você parece em paz com tudo.", me:"Se eu sentir raiva, é porque não evoluí nada."},
+  equilibrada:    {n:"A Equilibrada", ep:16, g:"bem", f:"Tem os dois lados", ev:"o conflito e a intensidade", irr:"Discussão na mesa, gente que se exalta.", an:"Minha paz aguenta um não.", fr:["Tem os dois lados","Não vale a pena discutir"], con:"Você nunca se exalta, nem pra bem nem pra mal.", me:"Se eu tomar partido, alguma coisa se quebra."},
+  desapegada:     {n:"A Desapegada", ep:15, g:"bem", f:"Não me apego a nada", ev:"a perda e a intimidade", irr:"A cobrança: “afinal, o que a gente é?”.", an:"O contrário do apego não é a distância.", fr:["Não me apego a nada","Prefiro não criar expectativa"], con:"Você nunca sente falta de ninguém.", me:"Se eu me apegar, eu vou perder."},
+  otimista:       {n:"A Otimista", ep:19, g:"bem", f:"Vai dar tudo certo", ev:"a dor e a frustração", irr:"O pessimista: “lá vem você com drama”.", an:"Isso está ruim — e eu posso olhar.", fr:["Vai dar tudo certo","Olha o lado bom"], con:"Você acha o lado bom de tudo.", me:"Se eu olhar de frente, não vou aguentar."},
+  semprebem:      {n:"A que Está Sempre Bem", ep:21, g:"bem", f:"Tô ótima!", ev:"a tristeza e a solidão", irr:"Insistirem: “tem certeza que você tá bem?”.", an:"Eu posso dizer que não tô bem.", fr:["Tá tudo ótimo!","Já passou"], con:"Você está sempre bem.", me:"Se eu mostrar que não tô bem, vou dar trabalho."},
+  engracada:      {n:"A Engraçada", ep:1, g:"bem", f:"Relaxa, tô zoando!", ev:"a tristeza", irr:"Gente que leva tudo a sério demais.", an:"A piada pode vir depois — não no lugar.", fr:["Relaxa, tô zoando!","Rir pra não chorar, né?"], con:"Você faz todo mundo rir.", me:"Se eu parar de fazer graça, o clima vai pesar."},
+
+  sabetudo:       {n:"A que Sabe Tudo", ep:2, g:"razao", f:"Na verdade, não é bem assim…", ev:"a vergonha de não saber", irr:"Alguém falando errado com toda a confiança.", an:"Dizer “não sei” não me diminui.", fr:["Na verdade, não é bem assim…","Deixa que eu explico"], con:"Você tem resposta pra tudo.", me:"Se eu não souber, vou passar vergonha."},
+  perfeita:       {n:"A Perfeita", ep:11, g:"razao", f:"Ainda não tá pronto", ev:"a impotência diante do acaso", irr:"Trabalho entregue pela metade.", an:"Eu faço a minha parte inteira e solto o resto.", fr:["Ainda não tá pronto","Tá bom… mas dava pra melhorar"], con:"Você é exigente demais com você.", me:"Se tiver uma falha, alguma coisa ruim vai acontecer."},
+  justa:          {n:"A Justa", ep:12, g:"razao", f:"Não é teimosia, é questão de princípio", ev:"a raiva e o ressentimento", irr:"Fura-fila — e ninguém reclama.", an:"O que a razão já me devolveu?", fr:["Alguém tem que falar","Eu perdoo, mas não esqueço"], con:"Você não deixa nada passar.", me:"Se eu deixar passar, estou aceitando a injustiça."},
+  rebelde:        {n:"A Rebelde", ep:18, g:"razao", f:"Ninguém manda em mim", ev:"o medo da submissão", irr:"“Porque sim”: ordem sem explicação.", an:"Eu consigo dizer sim sem me perder.", fr:["Ninguém manda em mim","Eu sou assim mesmo"], con:"Você é do contra.", me:"Se eu obedecer, eu deixo de ser eu."},
+  vitima:         {n:"A Vítima", ep:14, g:"razao", f:"Sempre acontece comigo", ev:"a própria potência — e a culpa junto", irr:"“A culpa também é sua”, “supera”.", an:"Isso aconteceu comigo — o que eu faço agora é meu.", fr:["Sempre acontece comigo","Eu já tentei de tudo"], con:"Você vive contando o que fizeram com você.", me:"Se eu puder mudar isso agora, eu podia ter mudado antes."},
+  incompreendida: {n:"A Incompreendida", ep:22, g:"razao", f:"Ninguém me entende", ev:"a vergonha de ser comum", irr:"“Ah, isso todo mundo sente.”", an:"Ser comum é pertencer.", fr:["Ninguém me entende","Você não ia entender"], con:"Você sente mais fundo que os outros.", me:"Se eu for igual a todo mundo, eu não sou ninguém."}
+};
+
+const G = {
+  cuidando:{n:"As que se escondem cuidando", m:["cuidadora","salvadora","agradavel","certinha"]},
+  dando:   {n:"As que se escondem dando conta", m:["forte","dacontadetudo","autossuficiente","controladora","bemsucedida","ansiosa"]},
+  bem:     {n:"As que se escondem estando bem", m:["espiritualizada","equilibrada","desapegada","otimista","semprebem","engracada"]},
+  razao:   {n:"As que se escondem tendo razão", m:["sabetudo","perfeita","justa","rebelde","vitima","incompreendida"]}
+};
+const GORD = ["cuidando","dando","bem","razao"];
+
+/* ======================= ETAPA 1 · TRIAGEM ======================= */
+const LIKERT = [{k:0,t:"Não sou eu"},{k:1,t:"Às vezes"},{k:2,t:"Bastante"},{k:3,t:"Essa sou eu"}];
+const TRI = [
+  {g:"cuidando", t:"Antes de saber o que eu quero, eu já sei o que os outros esperam de mim."},
+  {g:"dando",    t:"Se eu não segurar, as coisas desandam."},
+  {g:"bem",      t:"Quase ninguém me vê mal."},
+  {g:"razao",    t:"Quando eu sei que estou certo, é difícil deixar passar."},
+  {g:"cuidando", t:"Eu me sinto no lugar certo quando estou sendo útil ou agradando alguém."},
+  {g:"dando",    t:"Parar, delegar ou pedir ajuda me deixa inquieto."},
+  {g:"bem",      t:"Quando a conversa fica pesada, eu dou um jeito de aliviar, mudar de assunto ou ver o lado bom."},
+  {g:"razao",    t:"Muitas vezes sinto que os outros não enxergam o que eu enxergo — ou o que eu passei."}
+];
+const TRI_IRR = {typ:"o que te irrita", t:"Qual dessas te irrita MAIS?", opts:[
+  {k:"cuidando", t:"Gente egoísta, que só pensa em si."},
+  {k:"dando",    t:"Gente lenta e desorganizada, que deixa tudo pra você resolver."},
+  {k:"bem",      t:"Gente que faz drama e deixa o ambiente pesado."},
+  {k:"razao",    t:"Gente que fala besteira com toda a certeza — e ninguém corrige."}
+]};
+
+/* ============ ETAPA 1b · PERGUNTAS INDIRETAS (quem não se reconheceu) ============ */
+const IND = [
+  {typ:"quem te conhece", t:"O que a pessoa que mais te conhece diria sobre você?", opts:[
+    {k:"cuidando",t:"“Você vive pros outros.”"},{k:"dando",t:"“Você não para nunca.”"},
+    {k:"bem",t:"“Você nunca está mal.”"},{k:"razao",t:"“Você tem opinião sobre tudo.”"}]},
+  {typ:"escolha difícil", t:"Se tivesse que escolher, o que seria pior?", opts:[
+    {k:"cuidando",t:"Alguém ficar chateado comigo."},{k:"dando",t:"Perder o controle de uma coisa importante."},
+    {k:"bem",t:"Chorar na frente de todo mundo."},{k:"razao",t:"Ser pego falando uma coisa errada."}]},
+  {typ:"a cena", t:"Da última vez que um plano deu errado — viagem, festa, trabalho — o que você fez primeiro?", opts:[
+    {k:"cuidando",t:"Fui ver se todo mundo estava bem."},{k:"dando",t:"Fui resolver, rápido, antes que piorasse."},
+    {k:"bem",t:"Fiz uma piada ou disse que ia dar tudo certo."},{k:"razao",t:"Fui entender de quem foi o erro."}]},
+  {typ:"escolha difícil", t:"Qual desses elogios te pega mais fundo?", opts:[
+    {k:"cuidando",t:"“Você é uma pessoa tão boa.”"},{k:"dando",t:"“Com você não tem erro.”"},
+    {k:"bem",t:"“Você é uma paz.”"},{k:"razao",t:"“Você é muito inteligente.”"}]},
+  {typ:"o que te irrita", t:"No trânsito, o que mais te tira do sério?", opts:[
+    {k:"cuidando",t:"Quem não dá passagem pra ninguém."},{k:"dando",t:"Quem hesita e não sabe pra onde vai."},
+    {k:"bem",t:"A buzina, o grito, o motorista que xinga."},{k:"razao",t:"Quem fura a fila pelo acostamento."}]},
+  {typ:"a cena", t:"Domingo livre, nenhum compromisso. O que mais provavelmente acontece?", opts:[
+    {k:"cuidando",t:"Acabo ajudando alguém com alguma coisa."},{k:"dando",t:"Acabo adiantando trabalho ou arrumando alguma coisa."},
+    {k:"bem",t:"Fico de boa e evito pensar em qualquer coisa pesada."},{k:"razao",t:"Acabo lendo, pesquisando ou discutindo alguma ideia."}]},
+  {typ:"escolha difícil", t:"O que você mais esconde?", opts:[
+    {k:"cuidando",t:"Que eu também preciso de cuidado."},{k:"dando",t:"Que eu estou cansado."},
+    {k:"bem",t:"Que às vezes eu estou triste."},{k:"razao",t:"Que eu tenho medo de estar errado — ou de não ser levado a sério."}]}
+];
+
+/* ======================= ETAPA 2 · REFINAMENTO ======================= */
+const REF = {
+  cuidando:{
+    c1:{t:"Onze da noite, um amigo liga chorando: a vida desabou. O que você faz?", o:{
+      cuidadora:"Largo tudo e vou. No dia seguinte estou um caco — e não conto pra ninguém.",
+      salvadora:"Largo tudo e vou, e chego lá já com o plano pra resolver a vida dele.",
+      agradavel:"Atendo e concordo com tudo que ele disser, até com o que eu acho errado.",
+      certinha:"Atendo, porque não atender pegaria muito mal."}},
+    c2:{t:"No restaurante com amigos, o seu prato chega errado. O que você faz?", o:{
+      cuidadora:"Como assim mesmo, e ainda pergunto se o dos outros veio certo.",
+      salvadora:"Chamo o garçom e aproveito pra resolver o pedido atrasado da mesa inteira.",
+      agradavel:"Como assim mesmo, pra não criar clima.",
+      certinha:"Reclamo bem baixinho, pra ninguém reparar."}}
+  },
+  dando:{
+    c1:{t:"O projeto atrasou e alguém vai ter que assumir o rojão. O que você faz?", o:{
+      forte:"Assumo, viro a noite e no dia seguinte digo que foi tranquilo.",
+      dacontadetudo:"Assumo, aviso que estou no limite — e assumo do mesmo jeito.",
+      autossuficiente:"Assumo e não divido com ninguém, nem com quem se ofereceu.",
+      controladora:"Assumo, porque não confio que outra pessoa faça direito.",
+      bemsucedida:"Assumo se for um projeto que vai aparecer. Se ninguém for ver, deixo passar.",
+      ansiosa:"Passo a noite imaginando tudo que pode dar errado."}},
+    c2:{t:"Você ficou doente e vai ter que passar três dias de cama. O que mais te incomoda?", o:{
+      forte:"Que alguém me veja fraco.",
+      dacontadetudo:"A pilha de coisas que vai acumular.",
+      autossuficiente:"Ter que depender de alguém pra trazer as coisas.",
+      controladora:"Que vão fazer tudo errado sem mim.",
+      bemsucedida:"Ficar pra trás no que eu estava conquistando.",
+      ansiosa:"E se for uma coisa mais grave?"}}
+  },
+  bem:{
+    c1:{t:"Você descobre que um amigo próximo falou mal de você pelas costas. O que você faz?", o:{
+      espiritualizada:"Penso “coitado, é o processo dele” — e nunca mais chamo pra nada.",
+      equilibrada:"“Tem os dois lados.” Não faço nada, e o assunto morre ali.",
+      desapegada:"Corto o contato sem drama nenhum, e não me abalo.",
+      otimista:"“Melhor ter descoberto agora. Tudo acontece por um motivo.”",
+      semprebem:"Encontro com ele depois e ajo como se não soubesse de nada.",
+      engracada:"Transformo a história numa piada na próxima roda."}},
+    c2:{t:"No velório de alguém próximo. O que é mais a sua cara?", o:{
+      espiritualizada:"Lembrar que tudo é impermanente e ficar em paz.",
+      equilibrada:"Ficar no meio: nem triste demais, nem frio demais.",
+      desapegada:"Ir, cumprimentar a família e sair cedo.",
+      otimista:"Lembrar que ele descansou e que a vida continua.",
+      semprebem:"Segurar firme e chorar só depois, sozinho, no carro.",
+      engracada:"Aliviar o clima com alguma história engraçada dele."}}
+  },
+  razao:{
+    c1:{t:"Numa reunião, alguém afirma uma coisa errada com muita confiança. O que você faz?", o:{
+      sabetudo:"Corrijo na hora: “na verdade, não é bem assim”.",
+      perfeita:"Não corrijo, mas passo o dia remoendo o erro que isso vai causar.",
+      justa:"Corrijo com firmeza — deixar passar seria falta de princípio.",
+      rebelde:"Discordo, ainda mais se quem falou é quem manda na sala.",
+      vitima:"Fico quieto e guardo como mais uma prova de que nunca me escutam.",
+      incompreendida:"Fico quieto, porque não adianta: ninguém entende mesmo."}},
+    c2:{t:"Seu chefe diz: “esse trabalho podia estar melhor”. O que passa pela sua cabeça?", o:{
+      sabetudo:"Já começo a explicar por que eu fiz desse jeito.",
+      perfeita:"Eu sabia que tinha falha. Não devia ter entregado.",
+      justa:"Isso não é justo, com tudo que eu entreguei.",
+      rebelde:"Então ele que faça.",
+      vitima:"Sempre sobra pra mim.",
+      incompreendida:"Ele não alcança o que eu tentei fazer."}}
+  }
+};
+
+/* ======================= DESEMPATES DEDICADOS ======================= */
+const PAR = {
+  "agradavel|cuidadora":{t:"O seu medo é mais de…", o:{cuidadora:"Ficar sem função — de não ser útil.", agradavel:"Ficar sem permissão — de não ser aceito."}},
+  "autossuficiente|controladora":{t:"Quando você recusa ajuda, é mais porque…", o:{autossuficiente:"Não quero ficar devendo.", controladora:"Vai sair errado."}},
+  "dacontadetudo|forte":{t:"E o seu cansaço?", o:{forte:"Eu escondo. Ninguém precisa saber.", dacontadetudo:"Eu falo que estou cansado — e continuo aceitando."}},
+  "otimista|semprebem":{t:"Qual dessas sai mais da sua boca?", o:{otimista:"“Vai dar tudo certo.”", semprebem:"“Eu tô bem.”"}},
+  "equilibrada|espiritualizada":{t:"Sobre as suas emoções:", o:{espiritualizada:"Tem emoções que eu acho que não combinam mais comigo.", equilibrada:"Nenhuma emoção sobe muito em mim — nem as boas."}},
+  "justa|rebelde":{t:"Se ninguém estivesse mandando nada, a sua indignação…", o:{justa:"Continuaria: é pela causa.", rebelde:"Sumiria: é contra quem manda."}},
+  "incompreendida|vitima":{t:"O que você mais queria?", o:{vitima:"Que reconhecessem o que fizeram comigo.", incompreendida:"Que alguém finalmente me entendesse."}},
+  "cuidadora|salvadora":{t:"Quem você costuma ajudar?", o:{cuidadora:"Quem está perto de mim.", salvadora:"Quem está mais afundado — mesmo que eu mal conheça."}},
+  "agradavel|certinha":{t:"Antes de decidir, você pensa mais em…", o:{agradavel:"O que a pessoa na minha frente quer.", certinha:"O que é o certo — e no que vão pensar."}},
+  "bemsucedida|dacontadetudo":{t:"Por que você não para?", o:{bemsucedida:"Porque ainda não cheguei onde quero.", dacontadetudo:"Porque se eu não fizer, não anda."}},
+  "perfeita|sabetudo":{t:"O que dói mais?", o:{sabetudo:"Não saber responder.", perfeita:"Entregar uma coisa com falha."}}
+};
+
+/* ======================= ESTADO ======================= */
+const S = {
+  who:{}, ans:{}, ord:{}, seq:[], i:0, stage:"", screen:"",
+  ident1:null, grupoEscolhido:null, lowPath:false,
+  refGroups:[], ident2:null, principalMedida:null, mascaraEscolhida:null,
+  desN:0, deveria:"", t0:Date.now(), sent:false, result:null
+};
+
+const $ = s => document.querySelector(s);
+const app = document.getElementById("app");
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function shuffle(a){ const b=a.slice(); for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]];} return b; }
+function zeroG(){ return {cuidando:0,dando:0,bem:0,razao:0}; }
+function rank(obj){ return Object.keys(obj).sort((x,y)=> (obj[y]-obj[x]) || (GORD.indexOf(M[x]?M[x].g:x)-GORD.indexOf(M[y]?M[y].g:y))); }
+function scrollTop(){ window.scrollTo({top:0, behavior:"instant" in window ? "instant" : "auto"}); }
+
+/* ======================= PONTUAÇÃO ======================= */
+function triScores(){
+  const s = zeroG();
+  TRI.forEach((q,i)=>{ const v=S.ans["tri"+i]; if(typeof v==="number") s[q.g]+=v; });
+  if (S.ans.triIrr) s[S.ans.triIrr] += 2;
+  return s;
+}
+function indScores(){
+  const s = zeroG();
+  IND.forEach((q,i)=>{ const v=S.ans["ind"+i]; if(v) s[v]+=1; });
+  return s;
+}
+function groupScores(){
+  const a=triScores(), b=indScores(), s=zeroG();
+  GORD.forEach(g=> s[g]=a[g]+b[g]);
+  return s;
+}
+function maskScores(){
+  const s = {};
+  S.refGroups.forEach(g=> G[g].m.forEach(k=> s[k]=0));
+  S.refGroups.forEach(g=>{
+    ["c1","c2","irr","con"].forEach(p=>{ const v=S.ans["ref_"+g+"_"+p]; if(v && v in s) s[v]+=2; });
+    (S.ans["ref_"+g+"_fr"]||[]).forEach(x=>{ const k=x.split("#")[0]; if(k in s) s[k]+=1; });
+  });
+  return s;
+}
+function duelo(){
+  /* desempate = duelo: as duas começam empatadas na nota da mais alta; quem leva mais votos vence */
+  const a=S.principalMedida, b=S.mascaraEscolhida;
+  if (!a || !b || a===b || !S.desN) return null;
+  let va=0, vb=0;
+  for (let i=0;i<S.desN;i++){ const v=S.ans["des"+i]; if(v===a) va++; else if(v===b) vb++; }
+  return {a, b, va, vb};
+}
+function finalScores(){
+  const s = maskScores();
+  if (S.mascaraEscolhida && !(S.mascaraEscolhida in s)) s[S.mascaraEscolhida]=0;
+  const d = duelo();
+  if (d){
+    const base = s[d.a];
+    s[d.a] = base + 3*d.va + (d.va===d.vb ? 0.5 : 0);
+    s[d.b] = base + 3*d.vb;
+  }
+  return s;
+}
+
+/* ======================= SEQUÊNCIAS ======================= */
+function qTri(){
+  const qs = TRI.map((q,i)=>({id:"tri"+i, kind:"likert", typ:"quanto é você", t:q.t, opts:LIKERT}));
+  qs.push({id:"triIrr", kind:"one", typ:TRI_IRR.typ, t:TRI_IRR.t, opts:TRI_IRR.opts, shuffle:true});
+  return qs;
+}
+function qInd(){ return IND.map((q,i)=>({id:"ind"+i, kind:"one", typ:q.typ, t:q.t, opts:q.opts, shuffle:true})); }
+function qRef(){
+  const qs=[];
+  S.refGroups.forEach(g=>{
+    const ms=G[g].m, R=REF[g];
+    qs.push({id:"ref_"+g+"_c1", kind:"one", typ:"a cena", t:R.c1.t, opts:ms.map(k=>({k, t:R.c1.o[k]})), shuffle:true});
+    const fr=[]; ms.forEach(k=> M[k].fr.forEach((p,j)=> fr.push({k:k+"#"+j, t:"“"+p+"”"})));
+    qs.push({id:"ref_"+g+"_fr", kind:"multi", typ:"frases da sua boca", t:"Quais dessas saíram da sua boca nos últimos 7 dias? Marca todas.", opts:fr, shuffle:true});
+    qs.push({id:"ref_"+g+"_irr", kind:"one", typ:"o que te irrita", t:"Qual dessas te irrita MAIS?", opts:ms.map(k=>({k, t:M[k].irr})), shuffle:true});
+    qs.push({id:"ref_"+g+"_c2", kind:"one", typ:"a cena", t:R.c2.t, opts:ms.map(k=>({k, t:R.c2.o[k]})), shuffle:true});
+    qs.push({id:"ref_"+g+"_con", kind:"one", typ:"quem te conhece", t:"O que a pessoa que mais te conhece diria sobre você?", opts:ms.map(k=>({k, t:"“"+M[k].con+"”"})), shuffle:true});
+  });
+  return qs;
+}
+function qDes(a, b){
+  const qs=[]; const key=[a,b].sort().join("|");
+  if (PAR[key]) qs.push({t:PAR[key].t, opts:[{k:a,t:PAR[key].o[a]},{k:b,t:PAR[key].o[b]}]});
+  qs.push({t:"Qual dessas frases é mais verdade pra você?", opts:[{k:a,t:"“"+M[a].me+"”"},{k:b,t:"“"+M[b].me+"”"}]});
+  qs.push({t:"Qual dessas te irrita MAIS?", opts:[{k:a,t:M[a].irr},{k:b,t:M[b].irr}]});
+  qs.push({t:"O que a pessoa que mais te conhece diria?", opts:[{k:a,t:"“"+M[a].con+"”"},{k:b,t:"“"+M[b].con+"”"}]});
+  S.desN = qs.length;
+  return qs.map((q,i)=>({id:"des"+i, kind:"one", typ:"desempate", t:q.t, opts:q.opts, shuffle:true}));
+}
+
+const STAGE_LABEL = {tri:"Etapa 1 de 3 · Primeiras pistas", ind:"Etapa 1 de 3 · Por outro caminho", ref:"Etapa 2 de 3 · De perto", des:"Etapa 3 de 3 · Desempate"};
+
+function startStage(stage, qs){ S.stage=stage; S.seq=qs; S.i=0; renderQ(); }
+
+function next(){
+  if (S.i < S.seq.length-1){ S.i++; renderQ(); return; }
+  endStage(S.stage);
+}
+function endStage(stage){
+  if (stage==="tri"){
+    const s=triScores(); const mx=Math.max.apply(null, GORD.map(g=>s[g]));
+    if (mx<=2){ S.lowPath=true; startStage("ind", qInd()); return; }
+    renderRes1(); return;
+  }
+  if (stage==="ind"){
+    const r=rank(groupScores()); const g1=r[0];
+    const g2=(S.grupoEscolhido && S.grupoEscolhido!==g1) ? S.grupoEscolhido : r[1];
+    S.refGroups=[g1,g2]; renderTrans(); return;
+  }
+  if (stage==="ref"){ renderRes2(); return; }
+  if (stage==="des"){ renderDeveria(); return; }
+}
+
+/* ======================= TELAS ======================= */
+function progHTML(){
+  const pct = Math.round((S.i)/(S.seq.length)*100);
+  return `<div class="prog"><div class="row"><span>${esc(STAGE_LABEL[S.stage]||"")}</span><span>${S.i+1} de ${S.seq.length}</span></div><div class="bar"><i style="width:${pct}%"></i></div></div>`;
+}
+
+function renderQ(){
+  S.screen="q";
+  const q=S.seq[S.i];
+  if (q.shuffle && !S.ord[q.id]) S.ord[q.id]=shuffle(q.opts.map(o=>o.k));
+  const order = q.shuffle ? S.ord[q.id] : q.opts.map(o=>o.k);
+  const byK = {}; q.opts.forEach(o=> byK[o.k]=o);
+  const cur = S.ans[q.id];
+  const isOn = k => q.kind==="multi" ? (Array.isArray(cur) && cur.indexOf(k)>=0) : cur===k;
+  const opts = order.map(k=>{
+    const o=byK[k];
+    return `<button type="button" class="opt ${isOn(k)?"on":""}" data-k="${esc(k)}" role="${q.kind==="multi"?"checkbox":"radio"}" aria-checked="${isOn(k)}">${q.kind==="multi"?'<span class="box"></span>':""}<span>${esc(o.t)}</span></button>`;
+  }).join("");
+  let foot = "";
+  if (q.kind==="multi"){
+    const n = Array.isArray(cur)?cur.length:0;
+    foot = `<button class="btn" id="go" style="margin-top:14px">${n? "Continuar" : "Nenhuma dessas — continuar"}</button>`;
+  }
+  app.innerHTML = `${progHTML()}
+    <div class="q"><span class="typ">${esc(q.typ)}</span><h2>${esc(q.t)}</h2><div class="opts">${opts}</div>${foot}</div>
+    ${S.i>0?'<button class="back" id="back">← voltar</button>':""}`;
+  app.querySelectorAll(".opt").forEach(b=> b.addEventListener("click", ()=>{
+    let k=b.dataset.k; if (q.kind==="likert") k=Number(k);
+    if (q.kind==="multi"){
+      const arr = Array.isArray(S.ans[q.id]) ? S.ans[q.id].slice() : [];
+      const ix = arr.indexOf(k); if (ix>=0) arr.splice(ix,1); else arr.push(k);
+      S.ans[q.id]=arr; renderQ(); return;
+    }
+    S.ans[q.id]=k;
+    app.querySelectorAll(".opt").forEach(x=> x.classList.toggle("on", x===b));
+    setTimeout(next, 220);
+  }));
+  const go=$("#go"); if (go) go.onclick=()=>{ if(!Array.isArray(S.ans[q.id])) S.ans[q.id]=[]; next(); };
+  const bk=$("#back"); if (bk) bk.onclick=()=>{ S.i--; renderQ(); };
+  scrollTop();
+}
+
+function groupCard(g, title, opts){
+  opts = opts||{};
+  const ms = G[g].m.map(k=>`<div class="mk"><b>${esc(M[k].n)}</b><span>“${esc(M[k].f)}”</span></div>`).join("");
+  const tag = opts.pick ? "button" : "div";
+  return `<${tag} ${opts.pick?'type="button" ':''}class="grp ${opts.pick?"pick":""}" data-g="${g}" style="--gc:var(--g-${g})"><div class="gt">${esc(title||G[g].n)}</div>${ms}</${tag}>`;
+}
+function choicesHTML(){
+  return `<div class="choices">
+    <button class="btn" data-v="sim">Sim, sou eu</button>
+    <button class="btn ghost" data-v="parte">Em parte</button>
+    <button class="btn ghost" data-v="nao">Não me vejo aqui</button></div>`;
+}
+
+function renderRes1(){
+  S.screen="res1";
+  const r=rank(triScores()); const g1=r[0], g2=r[1];
+  const others=[r[2],r[3]].map(g=>G[g].m.map(k=>M[k].n).join(", ")).join(", ");
+  app.innerHTML = `<div class="eyebrow">Seu primeiro resultado</div>
+    <h1 style="font-size:30px;margin:6px 0 4px">Você se parece mais com estas máscaras</h1>
+    ${groupCard(g1,"Mais forte em você")}
+    ${groupCard(g2,"Em segundo lugar")}
+    <p class="others">do que com estas: ${esc(others)}.</p>
+    <h2 style="font-size:24px;margin-top:22px">Você se identifica?</h2>
+    ${choicesHTML()}`;
+  app.querySelectorAll(".choices .btn").forEach(b=> b.onclick=()=>{
+    S.ident1=b.dataset.v;
+    if (S.ident1==="nao"){ renderEscolheGrupo(); return; }
+    S.refGroups=[g1,g2]; startStage("ref", qRef());
+  });
+  scrollTop();
+}
+
+function renderEscolheGrupo(){
+  S.screen="escolheGrupo";
+  app.innerHTML = `<div class="eyebrow">Tudo bem</div>
+    <h1 style="font-size:28px;margin:6px 0 6px">Com qual destes grupos você se identifica mais?</h1>
+    <p class="muted" style="margin:0 0 6px">Toca no grupo. Depois vêm 7 perguntas diferentes, mais difíceis de prever.</p>
+    ${GORD.map(g=>groupCard(g,null,{pick:true})).join("")}
+    <button class="btn" id="go" style="margin-top:12px" disabled>Continuar</button>`;
+  app.querySelectorAll(".grp.pick").forEach(b=> b.onclick=()=>{
+    S.grupoEscolhido=b.dataset.g;
+    app.querySelectorAll(".grp.pick").forEach(x=> x.classList.toggle("on", x===b));
+    $("#go").disabled=false;
+  });
+  $("#go").onclick=()=> startStage("ind", qInd());
+  scrollTop();
+}
+
+function renderTrans(){
+  S.screen="trans";
+  const r=rank(groupScores()); const g1=r[0]; const tri1=rank(triScores())[0];
+  let msg;
+  if (S.lowPath) msg = "Suas primeiras respostas ficaram muito equilibradas, então fomos por outro caminho. Agora ficou mais claro.";
+  else if (S.grupoEscolhido===g1) msg = "As perguntas indiretas concordaram com você.";
+  else if (g1===tri1) msg = "As perguntas indiretas apontaram de novo para o mesmo lugar da primeira vez. Às vezes quem discorda é a própria máscara. Por isso a gente vai olhar os dois lados: esse e o que você escolheu.";
+  else msg = "As perguntas indiretas mudaram o quadro. A gente vai olhar de perto este grupo e o que você escolheu.";
+  app.innerHTML = `<div class="eyebrow">Recalculando</div>
+    <h1 style="font-size:28px;margin:6px 0 10px">Agora a gente vai olhar de perto</h1>
+    <div class="note">${esc(msg)}</div>
+    ${S.refGroups.map(g=>groupCard(g)).join("")}
+    <button class="btn" id="go" style="margin-top:12px">Continuar</button>`;
+  $("#go").onclick=()=> startStage("ref", qRef());
+  scrollTop();
+}
+
+function barsHTML(scores, keys){
+  const den = Math.max(10, ...keys.map(k=>scores[k]||0));
+  const pc = v => Math.max(0, Math.min(100, Math.round((v||0)/den*100)));
+  return keys.map(k=>`<div class="barrow" style="--gc:var(--g-${M[k].g})"><div class="bl">${esc(M[k].n)}</div><div class="bt"><i style="width:${pc(scores[k])}%"></i></div><div class="bv">${pc(scores[k])}%</div></div>`).join("");
+}
+
+function renderRes2(){
+  S.screen="res2";
+  const s=maskScores(); const r=rank(s);
+  S.principalMedida=r[0];
+  const top=r[0];
+  app.innerHTML = `<div class="eyebrow">Seu placar</div>
+    <h1 style="font-size:30px;margin:6px 0 4px">${esc(M[top].n)} apareceu mais</h1>
+    <p class="muted" style="margin:0 0 10px">“${esc(M[top].f)}” — o que ela evita: ${esc(M[top].ev)}.</p>
+    <div class="card">${barsHTML(s, r)}</div>
+    <h2 style="font-size:24px;margin-top:22px">Você se identifica?</h2>
+    ${choicesHTML()}`;
+  app.querySelectorAll(".choices .btn").forEach(b=> b.onclick=()=>{
+    S.ident2=b.dataset.v;
+    if (S.ident2==="nao"){ renderEscolheMascara(); return; }
+    renderDeveria();
+  });
+  scrollTop();
+}
+
+function renderEscolheMascara(){
+  S.screen="escolheMascara";
+  const list = GORD.map(g=>`<div class="grp" style="--gc:var(--g-${g})"><div class="gt">${esc(G[g].n)}</div>
+      <div class="opts">${G[g].m.map(k=>`<button type="button" class="opt" data-k="${k}"><span><b>${esc(M[k].n)}</b> <span class="muted">“${esc(M[k].f)}”</span></span></button>`).join("")}</div></div>`).join("");
+  app.innerHTML = `<div class="eyebrow">Tudo bem</div>
+    <h1 style="font-size:28px;margin:6px 0 6px">Com qual máscara você se identifica mais?</h1>
+    <p class="muted" style="margin:0 0 6px">Escolhe uma. Depois vêm umas perguntas pra desempatar.</p>
+    ${list}
+    <button class="btn" id="go" style="margin-top:12px" disabled>Continuar</button>`;
+  app.querySelectorAll(".opt").forEach(b=> b.onclick=()=>{
+    S.mascaraEscolhida=b.dataset.k;
+    app.querySelectorAll(".opt").forEach(x=> x.classList.toggle("on", x===b));
+    $("#go").disabled=false;
+  });
+  $("#go").onclick=()=>{
+    if (S.mascaraEscolhida===S.principalMedida){ renderDeveria(); return; }
+    startStage("des", qDes(S.principalMedida, S.mascaraEscolhida));
+  };
+  scrollTop();
+}
+
+function renderDeveria(){
+  S.screen="deveria";
+  app.innerHTML = `<div class="eyebrow">Pra fechar</div>
+    <h1 style="font-size:30px;margin:6px 0 14px">Completa a frase</h1>
+    <div class="q"><h2 style="margin:0 0 12px">Eu deveria ser mais…</h2>
+    <input id="dev" maxlength="40" autocomplete="off" placeholder="uma palavra"></div>
+    <button class="btn" id="go">Ver meu resultado</button>
+    <button class="link" id="skip">pular</button>`;
+  const fin = v => { S.deveria=(v||"").trim().slice(0,40); renderFinal(); };
+  $("#go").onclick=()=> fin($("#dev").value);
+  $("#skip").onclick=()=> fin("");
+  $("#dev").addEventListener("keydown", e=>{ if(e.key==="Enter") fin($("#dev").value); });
+  scrollTop();
+}
+
+function computeResult(){
+  const s=finalScores(); const r=rank(s);
+  const principal=r[0], apoio=r[1]||null;
+  let note="";
+  const d = duelo();
+  if (d){
+    if (d.vb > d.va) note="As perguntas de desempate concordaram com você.";
+    else if (d.va > d.vb) note="Você disse que não se via aqui, e o desempate apontou de novo para "+M[d.a].n+". Às vezes quem discorda é a própria máscara — e tudo bem. Fica com as duas e observa nas próximas semanas.";
+    else note="Deu empate entre as duas. Elas estão aí juntas — observa qual aparece mais nas próximas semanas.";
+  }
+  const extra = (S.mascaraEscolhida && S.mascaraEscolhida!==principal && S.mascaraEscolhida!==apoio) ? S.mascaraEscolhida : null;
+  return {scores:s, rank:r, principal, apoio, note, extra};
+}
+
+function renderFinal(){
+  S.screen="final";
+  const R=computeResult(); S.result=R;
+  const p=M[R.principal];
+  const ap = R.apoio ? M[R.apoio] : null;
+  const ex = R.extra ? M[R.extra] : null;
+  app.innerHTML = `<div class="res">
+    <div class="eyebrow">Sua máscara principal</div>
+    <h1>${esc(p.n)}</h1>
+    <p class="lead" style="margin-top:4px">O que ela evita: <b>${esc(p.ev)}</b>.</p>
+    <div class="anchor"><div class="k">A frase pra manter na cabeça</div><div class="f">“${esc(p.an)}”</div></div>
+    <p class="muted" style="margin:0">Ela tem um episódio só dela no VedantaCast: o episódio ${p.ep} de Removendo as Máscaras.</p>
+    ${R.note?`<div class="note">${esc(R.note)}</div>`:""}
+    ${ap?`<div class="sec"><div class="eyebrow">De apoio</div><h3 style="font-size:24px;margin:4px 0 2px">${esc(ap.n)}</h3>
+      <p class="muted" style="margin:0 0 6px">Evita ${esc(ap.ev)}. Episódio ${ap.ep}.</p>
+      <div class="note" style="margin-top:6px">“${esc(ap.an)}”</div></div>`:""}
+    ${ex?`<div class="sec"><div class="eyebrow">Você também se vê em</div><h3 style="font-size:22px;margin:4px 0 2px">${esc(ex.n)}</h3>
+      <div class="note" style="margin-top:6px">“${esc(ex.an)}”</div></div>`:""}
+    <div class="sec"><h3>Suas máscaras, de perto</h3><div class="card">${barsHTML(R.scores, R.rank)}</div></div>
+    <div class="sec"><h3>Como a sala está até agora</h3><div class="card" id="sala"><p class="muted" style="margin:0">Carregando…</p></div></div>
+    <p class="muted" id="sendMsg" style="margin-top:18px">Ninguém vê a sua resposta individual — só o gráfico do grupo.</p>
+  </div>`;
+  scrollTop();
+  submit().then(loadSala);
+}
+
+/* ======================= ENVIO ======================= */
+function payload(){
+  const R=S.result;
+  return {
+    evento:EVENTO,
+    email:S.who.email, cel:S.who.cel, modo:S.who.modo, uf:S.who.uf, tempo:S.who.tempo,
+    grupos_triagem:triScores(), top_triagem:rank(triScores()).slice(0,2),
+    ident1:S.ident1, grupo_escolhido:S.grupoEscolhido, low_path:S.lowPath,
+    grupos_final:groupScores(), grupos_refino:S.refGroups,
+    scores:R.scores, principal_medida:S.principalMedida,
+    ident2:S.ident2, mascara_escolhida:S.mascaraEscolhida,
+    principal:R.principal, apoio:R.apoio,
+    deveria:S.deveria || null,
+    respostas:S.ans,
+    duracao_s:Math.round((Date.now()-S.t0)/1000),
+    ua:navigator.userAgent.slice(0,200)
+  };
+}
+async function submit(){
+  if (S.sent) return true;
+  const body=JSON.stringify(payload());
+  for (let tent=0; tent<3; tent++){
+    try{
+      const r = await fetch(SUPABASE_URL+"/rest/v1/respostas22", {method:"POST",
+        headers:{"apikey":SUPABASE_ANON,"Authorization":"Bearer "+SUPABASE_ANON,"Content-Type":"application/json","Prefer":"return=minimal"}, body});
+      if (r.ok){ S.sent=true; return true; }
+    }catch(e){}
+    await new Promise(res=>setTimeout(res, 1200*(tent+1)));
+  }
+  const m=$("#sendMsg");
+  if (m){ m.innerHTML='<span class="err">Não consegui enviar a sua resposta.</span> <button class="link" id="retry">tentar de novo</button>'; $("#retry").onclick=()=> submit().then(ok=>{ if(ok){ m.textContent="Enviado. Ninguém vê a sua resposta individual — só o gráfico do grupo."; loadSala(); } }); }
+  return false;
+}
+async function rpc(fn, args){
+  const r = await fetch(SUPABASE_URL+"/rest/v1/rpc/"+fn, {method:"POST",
+    headers:{"apikey":SUPABASE_ANON,"Authorization":"Bearer "+SUPABASE_ANON,"Content-Type":"application/json"}, body:JSON.stringify(args||{})});
+  if (!r.ok) throw new Error("rpc "+r.status);
+  return r.json();
+}
+async function loadSala(){
+  const box=$("#sala"); if(!box) return;
+  try{
+    const d = await rpc("mascaras22_sala", {});
+    const pr=d.principal||{}; const tot=d.total||0;
+    const keys=Object.keys(pr).sort((a,b)=>pr[b]-pr[a]).slice(0,8);
+    if (!tot){ box.innerHTML='<p class="muted" style="margin:0">Você é a primeira resposta.</p>'; return; }
+    box.innerHTML = `<p class="muted" style="margin:0 0 6px">${tot} ${tot===1?"pessoa respondeu":"pessoas responderam"}. Máscara principal mais comum:</p>`+
+      keys.map(k=> M[k]?`<div class="barrow" style="--gc:var(--g-${M[k].g})"><div class="bl">${esc(M[k].n)}</div><div class="bt"><i style="width:${Math.round(pr[k]/tot*100)}%"></i></div><div class="bv">${Math.round(pr[k]/tot*100)}%</div></div>`:"").join("");
+  }catch(e){ box.innerHTML='<p class="muted" style="margin:0">O gráfico da sala aparece daqui a pouco.</p>'; }
+}
+
+/* ======================= INTRO ======================= */
+const UFS = ["AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT","PA","PB","PE","PI","PR","RJ","RN","RO","RR","RS","SC","SE","SP","TO","Fora do Brasil"];
+function renderIntro(){
+  S.screen="intro";
+  app.innerHTML = `<section>
+  <div class="eyebrow">Removendo as Máscaras · Imersão 17/10</div>
+  <h1 style="font-size:36px;margin-top:6px">Teste das 22 máscaras</h1>
+  <p class="lead">Umas 20 perguntas, uns 7 minutos. No meio do caminho a gente te mostra um resultado parcial e pergunta se você se reconhece. Se não, vêm umas perguntas a mais.</p>
+  <div class="card" style="margin-top:16px">
+    <p style="margin:0 0 8px"><b>Responde rápido.</b> A primeira resposta é a verdadeira. A segunda já é a máscara editando.</p>
+    <p class="muted" style="margin:0">Ninguém vê a sua resposta individual — só o gráfico do grupo.</p>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="eyebrow" style="margin-bottom:4px">Antes de começar</div>
+    <label for="email" class="lb">Seu e-mail</label>
+    <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="voce@exemplo.com">
+    <label for="cel" class="lb">Celular com DDD</label>
+    <input id="cel" type="tel" inputmode="tel" autocomplete="tel" placeholder="(21) 99999-9999">
+    <label class="lb">Você está</label>
+    <div class="seg" id="modo"><button type="button" data-v="presencial">Presencial</button><button type="button" data-v="online">Online</button></div>
+    <label for="uf" class="lb">Estado onde você mora</label>
+    <select id="uf"><option value="">Escolhe…</option>${UFS.map(u=>`<option>${u}</option>`).join("")}</select>
+    <label for="tempo" class="lb">Há quanto tempo você estuda Vedanta?</label>
+    <select id="tempo"><option value="">Escolhe…</option><option>Nunca estudei, tô começando agora</option><option>Menos de 1 ano</option><option>De 1 a 3 anos</option><option>Mais de 3 anos</option></select>
+    <p class="muted" id="formMsg" style="margin:12px 0 0">E-mail e celular servem só pra cruzar com a base de alunos. Não aparecem no gráfico nem pra ninguém.</p>
+  </div>
+  <button class="btn" id="start" style="margin-top:14px">Começar</button>
+  </section>`;
+  $("#modo").addEventListener("click", e=>{ const b=e.target.closest("button"); if(!b) return; S.who.modo=b.dataset.v; $("#modo").querySelectorAll("button").forEach(x=> x.classList.toggle("on", x===b)); });
+  $("#start").onclick=()=>{
+    const w=S.who;
+    w.email=$("#email").value.trim().toLowerCase();
+    w.cel=$("#cel").value.replace(/\D/g,"");
+    w.uf=$("#uf").value; w.tempo=$("#tempo").value;
+    const m=$("#formMsg"); const bad=s=>{ m.innerHTML='<span class="err">'+esc(s)+'</span>'; };
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(w.email)) return bad("Confere o e-mail.");
+    if (w.cel.length<10 || w.cel.length>13) return bad("Celular com DDD, só números.");
+    if (!w.modo) return bad("Marca se você está presencial ou online.");
+    if (!w.uf) return bad("Escolhe o estado.");
+    if (!w.tempo) return bad("Diz há quanto tempo estuda Vedanta (ou que tá começando).");
+    S.t0=Date.now();
+    startStage("tri", qTri());
+  };
+  scrollTop();
+}
+
+/* ======================= PAINEL (#painel=TOKEN) ======================= */
+let painelTimer=null;
+async function renderPainel(token){
+  document.body.classList.add("painel");
+  const load = async ()=>{
+    let d;
+    try{ d = await rpc("mascaras22_painel", {p_token:token}); }catch(e){ app.innerHTML='<p class="err">Não consegui carregar o painel.</p>'; return; }
+    if (!d || d.erro){ app.innerHTML='<p class="err">Token inválido.</p>'; return; }
+    const tot=d.total||0, pr=d.principal||{}, md=d.modo||{}, r1=d.recusa1||{}, r2=d.recusa2||{}, dv=d.deveria||[];
+    const gr=zeroG(); Object.keys(pr).forEach(k=>{ if(M[k]) gr[M[k].g]+=pr[k]; });
+    const mk=Object.keys(M).sort((a,b)=>(pr[b]||0)-(pr[a]||0));
+    const bar=(label,v,max,gc)=>`<div class="barrow" style="--gc:${gc}"><div class="bl">${esc(label)}</div><div class="bt"><i style="width:${max?Math.round(v/max*100):0}%"></i></div><div class="bv">${v}</div></div>`;
+    const maxM=Math.max(1,...mk.map(k=>pr[k]||0));
+    const recusadas=Object.keys(r2).filter(k=>M[k] && r2[k].n>=3).map(k=>({k, p:Math.round(r2[k].nao/r2[k].n*100), n:r2[k].n})).sort((a,b)=>b.p-a.p).slice(0,6);
+    const n1=(r1.sim||0)+(r1.parte||0)+(r1.nao||0);
+    const maxD=Math.max(1,...dv.map(x=>x.c));
+    app.innerHTML = `<div class="eyebrow">Painel · ao vivo</div>
+      <h1>Como a sala se dividiu</h1>
+      <div class="pgrid">
+        <div class="card"><div class="big">${tot}</div><p class="muted" style="margin:6px 0 0">respostas · presencial ${md.presencial||0} · online ${md.online||0}</p></div>
+        <div class="card"><h3 style="margin-bottom:6px">Por grupo</h3>${GORD.map(g=>bar(G[g].n.replace("As que se escondem ",""), gr[g], Math.max(1,...GORD.map(x=>gr[x])), "var(--g-"+g+")")).join("")}</div>
+        <div class="card" style="grid-column:1/-1"><h3 style="margin-bottom:6px">Máscara principal</h3>${mk.map(k=>bar(M[k].n, pr[k]||0, maxM, "var(--g-"+M[k].g+")")).join("")}</div>
+        <div class="card"><h3 style="margin-bottom:6px">Quem não se reconheceu</h3>
+          <p style="margin:0 0 10px">No primeiro resultado: <b>${n1?Math.round((r1.nao||0)/n1*100):0}%</b> disseram “não me vejo aqui” e ${n1?Math.round((r1.parte||0)/n1*100):0}% “em parte”.</p>
+          <p class="muted" style="margin:0 0 6px">As máscaras mais recusadas no placar (mín. 3 pessoas):</p>
+          ${recusadas.length? recusadas.map(x=>`<div class="mk"><b>${esc(M[x.k].n)}</b><span>${x.p}% recusaram (${x.n})</span></div>`).join("") : '<p class="muted" style="margin:0">Ainda poucas respostas.</p>'}
+          <p class="muted" style="margin:10px 0 0">Escolheram um grupo diferente do que as respostas apontaram: <b>${d.auto_vs_medido||0}</b></p></div>
+        <div class="card"><h3 style="margin-bottom:8px">“Eu deveria ser mais…”</h3>
+          <div class="cloud">${dv.length? dv.map(x=>`<span style="font-size:${Math.round(16+ (x.c/maxD)*30)}px">${esc(x.w)}</span>`).join("") : '<span class="muted" style="font-family:inherit;font-weight:400">Ainda nada.</span>'}</div></div>
+      </div>
+      <p class="muted" style="margin-top:14px">Atualiza sozinho a cada 10 segundos.</p>`;
+  };
+  await load();
+  painelTimer=setInterval(load, 10000);
+}
+
+/* ======================= DEBUG (?debug=1) ======================= */
+if (DEBUG){
+  const realFetch=window.fetch.bind(window);
+  window.__m22_sent=[];
+  window.fetch=async (url, opt)=>{
+    if (String(url).indexOf(SUPABASE_URL)===0){
+      if (/respostas22/.test(url)){ window.__m22_sent.push(JSON.parse(opt.body)); return new Response(null,{status:201}); }
+      if (/mascaras22_sala/.test(url)) return new Response(JSON.stringify({total:3, principal:{cuidadora:2, forte:1}}),{status:200});
+      if (/mascaras22_painel/.test(url)) return new Response(JSON.stringify({total:3, modo:{presencial:2,online:1}, principal:{cuidadora:2,forte:1}, recusa1:{sim:2,nao:1}, recusa2:{cuidadora:{n:3,nao:1}}, auto_vs_medido:1, deveria:[{w:"paciente",c:2},{w:"leve",c:1}]}),{status:200});
+    }
+    return realFetch(url, opt);
+  };
+  window.__m22 = {S, M, G, REF, triScores, groupScores, maskScores, finalScores, rank};
+}
+
+/* ======================= ROTEAMENTO ======================= */
+const hm = location.hash.match(/^#painel=(.+)$/);
+if (hm) renderPainel(decodeURIComponent(hm[1]));
+else renderIntro();
+
+})();
+</script>
+</body>
+</html>
