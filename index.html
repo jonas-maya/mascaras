@@ -638,16 +638,25 @@ async function rpc(fn, args){
   if (!r.ok) throw new Error("rpc "+r.status);
   return r.json();
 }
+let salaTimer=null;
 async function loadSala(){
   const box=$("#sala"); if(!box) return;
   try{
     const d = await rpc("mascaras22_sala", {});
     const pr=d.principal||{}; const tot=d.total||0;
-    const keys=Object.keys(pr).sort((a,b)=>pr[b]-pr[a]).slice(0,8);
     if (!tot){ box.innerHTML='<p class="muted" style="margin:0">Você é a primeira resposta.</p>'; return; }
-    box.innerHTML = `<p class="muted" style="margin:0 0 6px">${tot} ${tot===1?"pessoa respondeu":"pessoas responderam"}. Máscara principal mais comum:</p>`+
-      keys.map(k=> M[k]?`<div class="barrow" style="--gc:var(--g-${M[k].g})"><div class="bl">${esc(M[k].n)}</div><div class="bt"><i style="width:${Math.round(pr[k]/tot*100)}%"></i></div><div class="bv">${Math.round(pr[k]/tot*100)}%</div></div>`:"").join("");
+    const gr=zeroG(); Object.keys(pr).forEach(k=>{ if(M[k]) gr[M[k].g]+=pr[k]; });
+    const mine = S.result && S.result.principal;
+    const keys = Object.keys(pr).filter(k=>M[k]).sort((a,b)=>pr[b]-pr[a]);
+    const pc = v => Math.round(v/tot*100);
+    const row = (label, v, gc, me) => `<div class="barrow" style="--gc:${gc}"><div class="bl">${me?"<b>":""}${esc(label)}${me?" · você</b>":""}</div><div class="bt"><i style="width:${pc(v)}%"></i></div><div class="bv">${pc(v)}%</div></div>`;
+    box.innerHTML = `<p class="muted" style="margin:0 0 10px">${tot} ${tot===1?"pessoa respondeu":"pessoas responderam"} até agora. Atualiza sozinho.</p>
+      <div class="eyebrow" style="margin-bottom:2px">Por grupo · as que se escondem…</div>
+      ${GORD.map(g=>row(G[g].n.replace("As que se escondem ",""), gr[g], "var(--g-"+g+")", mine && M[mine].g===g)).join("")}
+      <div class="eyebrow" style="margin:14px 0 2px">Por máscara principal</div>
+      ${keys.map(k=>row(M[k].n, pr[k], "var(--g-"+M[k].g+")", k===mine)).join("")}`;
   }catch(e){ box.innerHTML='<p class="muted" style="margin:0">O gráfico da sala aparece daqui a pouco.</p>'; }
+  if (!salaTimer) salaTimer = setInterval(()=>{ if (S.screen==="final") loadSala(); }, 20000);
 }
 
 /* ======================= INTRO ======================= */
