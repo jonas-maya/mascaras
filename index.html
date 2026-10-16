@@ -157,6 +157,13 @@ const TRI_IRR = {typ:"o que te irrita", t:"Qual dessas te irrita MAIS?", opts:[
   {k:"razao",    t:"Gente que fala besteira com toda a certeza — e ninguém corrige."}
 ]};
 
+const TRI_TB = {typ:"o que sai da sua boca", t:"Alguém te pergunta “tudo bem?”. O que é mais verdade?", opts:[
+  {k:"cuidando", t:"Respondo rápido e já pergunto de volta — prefiro saber de você."},
+  {k:"dando",    t:"“Na correria, mas dando conta.”"},
+  {k:"bem",      t:"“Tudo ótimo!” — no automático."},
+  {k:"razao",    t:"“Seria, se as coisas fossem feitas direito.”"}
+]};
+
 /* ============ ETAPA 1b · PERGUNTAS INDIRETAS (quem não se reconheceu) ============ */
 const IND = [
   {typ:"quem te conhece", t:"O que a pessoa que mais te conhece diria sobre você?", opts:[
@@ -168,7 +175,7 @@ const IND = [
   {typ:"a cena", t:"Da última vez que um plano deu errado — viagem, festa, trabalho — o que você fez primeiro?", opts:[
     {k:"cuidando",t:"Fui ver se todo mundo estava bem."},{k:"dando",t:"Fui resolver, rápido, antes que piorasse."},
     {k:"bem",t:"Fiz uma piada ou disse que ia dar tudo certo."},{k:"razao",t:"Fui entender de quem foi o erro."}]},
-  {typ:"escolha difícil", t:"Qual desses elogios te pega mais fundo?", opts:[
+  {typ:"escolha difícil", t:"Qual desses elogios você mais gosta de ouvir?", opts:[
     {k:"cuidando",t:"“Você é uma pessoa tão boa.”"},{k:"dando",t:"“Com você não tem erro.”"},
     {k:"bem",t:"“Você é uma paz.”"},{k:"razao",t:"“Você é muito inteligente.”"}]},
   {typ:"o que te irrita", t:"No trânsito, o que mais te tira do sério?", opts:[
@@ -282,6 +289,7 @@ function triScores(){
   const s = zeroG();
   TRI.forEach((q,i)=>{ const v=S.ans["tri"+i]; if(typeof v==="number") s[q.g]+=v; });
   if (S.ans.triIrr) s[S.ans.triIrr] += 2;
+  if (S.ans.triTb) s[S.ans.triTb] += 2;
   return s;
 }
 function indScores(){
@@ -327,6 +335,7 @@ function finalScores(){
 function qTri(){
   const qs = TRI.map((q,i)=>({id:"tri"+i, kind:"likert", typ:"quanto é você", t:q.t, opts:LIKERT}));
   qs.push({id:"triIrr", kind:"one", typ:TRI_IRR.typ, t:TRI_IRR.t, opts:TRI_IRR.opts, shuffle:true});
+  qs.push({id:"triTb", kind:"one", typ:TRI_TB.typ, t:TRI_TB.t, opts:TRI_TB.opts, shuffle:true});
   return qs;
 }
 function qInd(){ return IND.map((q,i)=>({id:"ind"+i, kind:"one", typ:q.typ, t:q.t, opts:q.opts, shuffle:true})); }
@@ -335,13 +344,19 @@ function qRef(){
   S.refGroups.forEach(g=>{
     const ms=G[g].m, R=REF[g];
     qs.push({id:"ref_"+g+"_c1", kind:"one", typ:"a cena", t:R.c1.t, opts:ms.map(k=>({k, t:R.c1.o[k]})), shuffle:true});
-    const fr=[]; ms.forEach(k=> M[k].fr.forEach((p,j)=> fr.push({k:k+"#"+j, t:"“"+p+"”"})));
-    qs.push({id:"ref_"+g+"_fr", kind:"multi", typ:"frases da sua boca", t:"Quais dessas saíram da sua boca nos últimos 7 dias? Marca todas.", opts:fr, shuffle:true});
+    qs.push({id:"ref_"+g+"_fr", kind:"multi", typ:"frases da sua boca", t:"Quais dessas saíram da sua boca nos últimos 7 dias? Marca todas.", opts:frasesIntercaladas(ms), shuffle:false});
     qs.push({id:"ref_"+g+"_irr", kind:"one", typ:"o que te irrita", t:"Qual dessas te irrita MAIS?", opts:ms.map(k=>({k, t:M[k].irr})), shuffle:true});
     qs.push({id:"ref_"+g+"_c2", kind:"one", typ:"a cena", t:R.c2.t, opts:ms.map(k=>({k, t:R.c2.o[k]})), shuffle:true});
     qs.push({id:"ref_"+g+"_con", kind:"one", typ:"quem te conhece", t:"O que a pessoa que mais te conhece diria sobre você?", opts:ms.map(k=>({k, t:"“"+M[k].con+"”"})), shuffle:true});
   });
   return qs;
+}
+/* duas rodadas, cada máscara uma vez por rodada; a 1ª da 2ª rodada nunca repete a última da 1ª */
+function frasesIntercaladas(ms){
+  const r1=shuffle(ms), r2=shuffle(ms);
+  if (r2.length>1 && r2[0]===r1[r1.length-1]) { const t=r2[0]; r2[0]=r2[1]; r2[1]=t; }
+  const j={}; ms.forEach(k=> j[k]= Math.random()<0.5 ? 0 : 1);
+  return r1.map(k=>({k:k+"#"+j[k], t:"“"+M[k].fr[j[k]]+"”"})).concat(r2.map(k=>({k:k+"#"+(1-j[k]), t:"“"+M[k].fr[1-j[k]]+"”"})));
 }
 function qDes(a, b){
   const qs=[]; const key=[a,b].sort().join("|");
@@ -364,7 +379,7 @@ function next(){
 function endStage(stage){
   if (stage==="tri"){
     const s=triScores(); const mx=Math.max.apply(null, GORD.map(g=>s[g]));
-    if (mx<=2){ S.lowPath=true; startStage("ind", qInd()); return; }
+    if (mx<=4){ S.lowPath=true; startStage("ind", qInd()); return; }
     renderRes1(); return;
   }
   if (stage==="ind"){
