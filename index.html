@@ -78,6 +78,23 @@ input,select{width:100%;font:inherit;font-size:16px;padding:12px;border:1.5px so
 .sec{margin-top:26px}
 .sec h3{font-size:20px;margin-bottom:8px}
 .back{appearance:none;background:none;border:0;color:var(--ink-3);font:inherit;font-size:14px;cursor:pointer;padding:6px 0}
+.mapa{display:flex;flex-direction:column;gap:8px;background:var(--paper);border:1px solid var(--line);border-top:4px solid var(--gc,var(--accent));border-radius:var(--radius);padding:16px}
+.mapa h4{font-family:"Fraunces",Georgia,serif;font-size:18px;margin:10px 0 0}
+.mapa .mrow{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.mapa .ml{display:block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.mapa .mrow .ml{display:inline;min-width:70px}
+.mapa .voz,.mapa .pt{background:var(--bg);border-radius:10px;padding:10px 12px;font-size:16px;line-height:1.4}
+.mapa .voz{font-family:"Fraunces",Georgia,serif}
+.mapa .voz .ml,.mapa .pt .ml{margin-bottom:2px;font-family:"Nunito Sans",system-ui,sans-serif}
+.mapa .contra{margin:0;font-size:16px;line-height:1.5}
+.mapa .contra em{display:block;font-family:"Fraunces",Georgia,serif;color:var(--accent-ink);margin-top:2px}
+.guardar{margin-top:16px;background:var(--accent-soft);border-radius:var(--radius);padding:16px}
+.guardar .lk{font-size:14px;word-break:break-all;background:var(--paper);border-radius:8px;padding:8px 10px;color:var(--ink-2)}
+.gbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.gbtns .btn{width:auto;flex:1 1 180px;text-align:center;text-decoration:none;display:inline-block}
+details.mais{margin-top:8px}
+details.mais summary{cursor:pointer;font-weight:700;color:var(--accent-ink);padding:6px 0}
+details.mais .mapa{margin-top:6px}
 /* painel */
 .painel main{max-width:1100px}
 .painel h1{font-size:42px}
@@ -586,17 +603,100 @@ function renderFinal(){
     <div class="anchor"><div class="k">A frase pra manter na cabeça</div><div class="f">“${esc(p.an)}”</div></div>
     <p class="muted" style="margin:0">Ela tem um episódio só dela no VedantaCast: o episódio ${p.ep} de Removendo as Máscaras.</p>
     ${R.note?`<div class="note">${esc(R.note)}</div>`:""}
+    <div class="sec"><h3>O mapa da sua máscara</h3>${mapaHTML(R.principal, false)}</div>
+    ${guardarHTML(R.principal)}
     ${ap?`<div class="sec"><div class="eyebrow">De apoio</div><h3 style="font-size:24px;margin:4px 0 2px">${esc(ap.n)}</h3>
       <p class="muted" style="margin:0 0 6px">Evita ${esc(ap.ev)}. Episódio ${ap.ep}.</p>
-      <div class="note" style="margin-top:6px">“${esc(ap.an)}”</div></div>`:""}
+      <div class="note" style="margin-top:6px">“${esc(ap.an)}”</div>
+      <details class="mais"><summary>Ver o mapa completo</summary>${mapaHTML(R.apoio, false)}<p class="muted">Link: <a class="link" style="padding:0" href="${mapaLink(R.apoio)}">${esc(mapaLink(R.apoio))}</a></p></details></div>`:""}
     ${ex?`<div class="sec"><div class="eyebrow">Você também se vê em</div><h3 style="font-size:22px;margin:4px 0 2px">${esc(ex.n)}</h3>
-      <div class="note" style="margin-top:6px">“${esc(ex.an)}”</div></div>`:""}
+      <div class="note" style="margin-top:6px">“${esc(ex.an)}”</div>
+      <details class="mais"><summary>Ver o mapa completo</summary>${mapaHTML(R.extra, false)}<p class="muted">Link: <a class="link" style="padding:0" href="${mapaLink(R.extra)}">${esc(mapaLink(R.extra))}</a></p></details></div>`:""}
     <div class="sec"><h3>Suas máscaras, de perto</h3><div class="card">${barsHTML(R.scores, R.rank)}</div></div>
     <div class="sec"><h3>Como a sala está até agora</h3><div class="card" id="sala"><p class="muted" style="margin:0">Carregando…</p></div></div>
     <p class="muted" id="sendMsg" style="margin-top:18px">Ninguém vê a sua resposta individual — só o gráfico do grupo.</p>
   </div>`;
+  bindCopy(R.principal);
   scrollTop();
   submit().then(loadSala);
+}
+
+
+/* ======================= MAPA DE CADA MÁSCARA (tela final + link #m-<máscara>) ======================= */
+const MAPA = {
+  cuidadora:{def:"o lugar dela", contra:"Quer amor e recebe gratidão. Quanto mais cuida, menos é cuidada.", um:"Fabrica a demanda que a esgota.", gat:"Alguém precisa de algo — ou alguém oferece algo a você.", sin:"Um incômodo ao receber; urgência de servir.", aut:"Faz antes de pedirem, devolve o elogio na hora, come de pé.", nf:"Oferecer antes de alguém pedir.", su:"O desconforto de receber, sem consertar."},
+  salvadora:{def:"a função", contra:"Precisa que o outro continue afundando, e resgatando impede ele de crescer.", um:"Quanto mais salva, mais gente pra salvar.", gat:"Alguém em crise por perto.", sin:"Uma urgência quase animada: “isso é comigo”.", aut:"Assume o problema, chega com o plano, decide pelo outro.", nf:"Resolver o que é do outro.", su:"A impotência de ver alguém passar pelo que é dele, oferecendo a mão sem andar no lugar."},
+  agradavel:{def:"a permissão de ficar", contra:"Se apaga pra ser aceita. Então quem é aceito não é ela.", um:"Nunca foi aceita, porque nunca foi apresentada.", gat:"Alguém dá uma opinião ou pede uma escolha.", sin:"Um frio; a vontade de sintonizar com o outro antes de saber o que você acha.", aut:"Concorda na hora, “tanto faz”, pede desculpa.", nf:"Responder antes de saber o que você acha.", su:"Três segundos de silêncio e o risco de desagradar."},
+  certinha:{def:"a absolvição", contra:"Fugindo do tribunal de fora, instalou um dentro que não fecha.", um:"Nunca foi condenada e cumpre pena todo dia.", gat:"Uma decisão em que dá pra errar na frente dos outros.", sin:"A plateia imaginária: a cara de alguém julgando.", aut:"Escolhe o que não condena, censura antes de falar.", nf:"Perguntar “o que vão pensar?” primeiro.", su:"A outra pergunta, “o que eu quero?”, e o medo de que vejam você querendo."},
+  forte:{def:"a imagem de inabalável", contra:"Ensina todo mundo que não precisa de nada. No dia em que precisar, ninguém vai perceber.", um:"Construiu a solidão que mais temia.", gat:"Perda, dor, ou alguém perguntando como você está.", sin:"Um nó na garganta engolido; o corpo fechando.", aut:"“Tá tudo bem”, assume, organiza, não chora.", nf:"Dizer “tá tudo bem” quando não está.", su:"Deixar que vejam você um pouco frágil, sem desmoronar."},
+  dacontadetudo:{def:"o valor medido em volume", contra:"Aceita tudo pra não falhar e faz tudo pela metade.", um:"Pra não falhar em nada, falha um pouco em tudo.", gat:"Um pedido a mais quando a agenda já está cheia.", sin:"O cansaço e o “eu encaixo” subindo juntos.", aut:"Diz sim, encaixa, reclama do cansaço e continua.", nf:"Aceitar no reflexo.", su:"O desconforto de ocupar o próprio limite."},
+  autossuficiente:{def:"a independência", contra:"Pra não ficar na mão de ninguém, fica sem ninguém.", um:"Livre de dívida, cheia de solidão.", gat:"Alguém oferece ajuda, ou você precisa de algo.", sin:"Um recuo, parecido com orgulho ferido.", aut:"“Não precisa, eu resolvo”; carrega tudo e aprende tudo sem pedir.", nf:"Recusar antes de pensar se precisa.", su:"O desconforto de ficar devendo."},
+  controladora:{def:"a segurança", contra:"Cada coisa sob controle é mais uma coisa que pode falhar.", um:"Uma fábrica de medo montada pra acabar com o medo.", gat:"Alguém faz do jeito dele, ou algo sai do roteiro.", sin:"Aceleração; a mão coçando pra pegar de volta.", aut:"Refaz, checa, manda “chegou?”.", nf:"Pegar de volta o que delegou.", su:"A impotência de não garantir o resultado."},
+  bemsucedida:{def:"o valor medido em resultado", contra:"A régua sobe a cada conquista. Tem tudo que queria e não sente quase nada.", um:"Quanto mais chega, mais longe fica.", gat:"Tempo livre, ou alguém se saindo melhor.", sin:"Inquietação no descanso; a comparação ligando sozinha.", aut:"Transforma descanso em produtividade, conta resultado em vez de notícia.", nf:"Medir o dia pelo que produziu.", su:"O vazio de um tempo sem conquista."},
+  ansiosa:{def:"a previsibilidade", contra:"Vive o problema uma vez a mais do que quem passa por ele.", um:"Pra não ser pega de surpresa, vive em sobressalto.", gat:"Incerteza: mensagem sem resposta, plano em aberto.", sin:"A mente correndo pro futuro; aperto no peito.", aut:"Ensaia cenários, checa, pede confirmação.", nf:"Rodar o cenário de novo.", su:"O intervalo sem resposta."},
+  espiritualizada:{def:"a imagem de evoluída", contra:"Proibir a emoção não a elimina. Entrega o comando a ela.", um:"Busca liberdade e constrói a cela mais bem decorada.", gat:"Alguém te ofende, te corta, ou consegue o que você queria.", sin:"A raiva ou a inveja sobe, e a tradução espiritual já vem junto.", aut:"“É o processo dele”, afastamento “por energia”, julgamento fino.", nf:"Traduzir a emoção em linguagem espiritual.", su:"O nome cru da emoção, em uma palavra."},
+  equilibrada:{def:"a paz da casa", contra:"Paz sem conflito é assunto empilhado. Um dia a pilha cai de uma vez.", um:"Evita a briga pequena e fabrica a explosão.", gat:"Um conflito, uma alegria grande, ou alguém pedindo posição.", sin:"O volume abaixando por dentro; a vontade de ficar no meio.", aut:"“Tem os dois lados”, não se posiciona, engole.", nf:"Neutralizar a conversa.", su:"A intensidade: tomar um lado sem perder o chão."},
+  desapegada:{def:"a invulnerabilidade", contra:"Não perde nada porque não tem nada. Paga o luto em parcelas, todo dia.", um:"Pra não perder, nunca tem.", gat:"Alguém se aproxima, a relação fica séria, ou vem uma perda.", sin:"Um esfriamento; vontade de sair antes.", aut:"Corta antes, some, chama distância de leveza.", nf:"Sair antes que o outro saia.", su:"Deixar alguém importar, com o risco de perder."},
+  otimista:{def:"a esperança", contra:"A dor que não foi sentida perde o endereço e volta como insônia.", um:"Pula a dor e fica com ela.", gat:"Uma má notícia, ou a dor de alguém.", sin:"A pressa de achar o lado bom.", aut:"Reenquadra, “tudo acontece por um motivo”, não abre o extrato.", nf:"Oferecer o lado bom antes de a dor ser dita.", su:"O “isso está ruim” por um tempo."},
+  semprebem:{def:"não ser peso", contra:"O socorro não chega porque ninguém foi avisado.", um:"Pra não pesar em ninguém, fica sem ninguém.", gat:"“Como você está?”", sin:"O “tudo ótimo” pronto na boca antes de consultar por dentro.", aut:"“Tudo ótimo”, edita, chora no carro, longe de todo mundo.", nf:"Responder no automático.", su:"Uma resposta verdadeira pra uma pessoa."},
+  engracada:{def:"o clima leve", contra:"Impede a única coisa que alivia a tristeza: ser vista.", um:"A mais querida da roda e a mais sozinha da roda.", gat:"Silêncio pesado, assunto doído.", sin:"A piada chega antes de você saber o que sentiu.", aut:"Piada, muda de assunto, vira show.", nf:"Fazer a piada no lugar da emoção.", su:"Cinco segundos de silêncio vendo o que tinha embaixo."},
+  sabetudo:{def:"a competência", contra:"Quem não pode dizer “não sei” para de aprender.", um:"Feita pra evitar a vergonha, produz a cena vergonhosa.", gat:"Uma pergunta que você não sabe, ou alguém falando errado.", sin:"A explicação subindo antes da pergunta terminar; calor no rosto.", aut:"“Na verdade…”, “depende…”, corrige.", nf:"Responder o que não sabe.", su:"O “não sei” em voz alta."},
+  perfeita:{def:"o padrão", contra:"O amuleto não funciona. A coisa ruim vem, e vem com a pergunta “onde eu falhei?”.", um:"A obra perfeita e inexistente.", gat:"Entregar, mostrar, passar por avaliação.", sin:"O “ainda não tá pronto”.", aut:"Revisa de novo, adia, remói.", nf:"Fazer mais uma revisão.", su:"Entregar com a falha possível."},
+  justa:{def:"a causa", contra:"Em nome da justiça, comete injustiça. E paga os juros de uma dívida que o outro nem sabe que tem.", um:"Ganha o argumento e perde o domingo.", gat:"Uma injustiça, um fura-fila, uma ofensa antiga.", sin:"O calor da indignação; a frase “isso é um absurdo”.", aut:"Corrige, cobra, reabre a conta antiga.", nf:"Transformar a mágoa em causa.", su:"Dizer “isso me machucou” no lugar de “isso é errado”."},
+  rebelde:{def:"a autonomia", contra:"Fazendo sempre o contrário, deixa quem manda decidir a vida dela.", um:"A coleira ao contrário.", gat:"Uma ordem, uma regra, um “você deveria”.", sin:"A resistência subindo antes de avaliar o pedido.", aut:"Faz o contrário, atrasa de propósito, recusa conselho.", nf:"Decidir pelo contrário.", su:"Avaliar o pedido pelo que ele é — e às vezes concordar."},
+  vitima:{def:"a inocência", contra:"A história protege da culpa e prende no lugar. A vida acontece com ela, nunca por ela.", um:"A força está inteira, apontada pra trás.", gat:"Uma solução proposta, uma cobrança, uma dificuldade nova.", sin:"O “sempre comigo” e a história antiga voltando.", aut:"Explica por que não dá, conta a história, espera que adivinhem.", nf:"Contar a história de novo.", su:"A pergunta “o que é meu de fazer agora?”."},
+  incompreendida:{def:"a singularidade", contra:"Se ninguém entende, ela para de explicar. E aí ninguém entende mesmo.", um:"Pra ser especial, fica sozinha.", gat:"Uma conversa comum, um conselho simples.", sin:"O “ninguém me entende”; um afastamento que parece superioridade.", aut:"“Você não ia entender”, desqualifica o comum, não explica.", nf:"Desistir de explicar antes de tentar.", su:"Contar simples, como coisa comum."}
+};
+const SITE = "https://jonas-maya.github.io/mascaras/";
+function mapaLink(k){ return SITE + "#m-" + k; }
+function mapaHTML(k, withAnchor){
+  const m = M[k], x = MAPA[k];
+  return `<div class="mapa" style="--gc:var(--g-${m.g})">
+    <div class="mrow"><span class="ml">Defende</span><span>${esc(x.def)}</span></div>
+    <div class="mrow"><span class="ml">Foge de</span><span>${esc(m.ev)}</span></div>
+    <h4>As três vozes</h4>
+    <div class="voz"><span class="ml">O que ela diz</span>“${esc(m.f)}”</div>
+    <div class="voz"><span class="ml">O que ela pensa</span>“${esc(m.me)}”</div>
+    <div class="voz"><span class="ml">O que dizem dela</span>“${esc(m.con)}”</div>
+    <h4>O que ela produz</h4>
+    <p class="contra">${esc(x.contra)} <em>${esc(x.um)}</em></p>
+    <h4>O seu ponto</h4>
+    <div class="pt"><span class="ml">Gatilho</span>${esc(x.gat)}</div>
+    <div class="pt"><span class="ml">O sinal, um segundo antes</span>${esc(x.sin)}</div>
+    <div class="pt"><span class="ml">A crença por baixo</span>“${esc(m.me)}”</div>
+    <div class="pt"><span class="ml">O automático</span>${esc(x.aut)}</div>
+    <h4>Na hora</h4>
+    <div class="pt"><span class="ml">Não faça</span>${esc(x.nf)}</div>
+    <div class="pt"><span class="ml">Sustente</span>${esc(x.su)}</div>
+    ${withAnchor ? `<div class="anchor"><div class="k">A frase pra manter na cabeça</div><div class="f">“${esc(m.an)}”</div></div>` : ""}
+  </div>`;
+}
+function guardarHTML(k){
+  const url = mapaLink(k);
+  const wa = "https://wa.me/?text=" + encodeURIComponent("Meu mapa em Removendo as Máscaras: " + M[k].n + "\n" + url);
+  return `<div class="guardar"><div class="eyebrow">Guarda o seu mapa</div>
+    <p class="muted" style="margin:4px 0 10px">Esse link abre o mapa da sua máscara sempre que você quiser. Manda pro seu próprio WhatsApp ou tira um print desta tela.</p>
+    <div class="lk" id="lk">${esc(url)}</div>
+    <div class="gbtns"><a class="btn" href="${wa}" target="_blank" rel="noopener">Mandar pelo WhatsApp</a>
+    <button class="btn ghost" type="button" id="copy">Copiar link</button></div></div>`;
+}
+function bindCopy(k){
+  const b = $("#copy"); if (!b) return;
+  b.onclick = async () => {
+    try { await navigator.clipboard.writeText(mapaLink(k)); b.textContent = "Link copiado"; }
+    catch(e){ const r = document.createRange(); r.selectNodeContents($("#lk")); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent = "Selecionado — copia"; }
+  };
+}
+function renderMapaPage(k){
+  const m = M[k];
+  app.innerHTML = `<div class="res">
+    <div class="eyebrow">Removendo as Máscaras · o mapa da máscara</div>
+    <h1>${esc(m.n)}</h1>
+    <p class="lead" style="margin-top:4px">${esc(G[m.g].n)}. Episódio ${m.ep} do VedantaCast.</p>
+    ${mapaHTML(k, true)}
+    <p class="muted" style="margin-top:18px"><a href="./" class="link" style="padding:0">Fazer o teste das 22 máscaras</a></p>
+  </div>`;
+  scrollTop();
 }
 
 /* ======================= ENVIO ======================= */
@@ -753,13 +853,19 @@ if (DEBUG){
     }
     return realFetch(url, opt);
   };
-  window.__m22 = {S, M, G, REF, triScores, groupScores, maskScores, finalScores, rank};
+  window.__m22 = {S, M, G, REF, renderFinal, triScores, groupScores, maskScores, finalScores, rank};
 }
 
 /* ======================= ROTEAMENTO ======================= */
-const hm = location.hash.match(/^#painel=(.+)$/);
-if (hm) renderPainel(decodeURIComponent(hm[1]));
-else renderIntro();
+function route(){
+  const hm = location.hash.match(/^#painel=(.+)$/);
+  const mm = location.hash.match(/^#m-([a-z]+)$/);
+  if (hm) renderPainel(decodeURIComponent(hm[1]));
+  else if (mm && M[mm[1]]) renderMapaPage(mm[1]);
+  else renderIntro();
+}
+window.addEventListener("hashchange", () => { if (S.screen !== "q" && S.screen !== "final") route(); });
+route();
 
 })();
 </script>
