@@ -88,6 +88,7 @@ input,select{width:100%;font:inherit;font-size:16px;padding:12px;border:1.5px so
 .mapa .voz .ml,.mapa .pt .ml{margin-bottom:2px;font-family:"Nunito Sans",system-ui,sans-serif}
 .mapa .contra{margin:0;font-size:16px;line-height:1.5}
 .mapa .contra em{display:block;font-family:"Fraunces",Georgia,serif;color:var(--accent-ink);margin-top:2px}
+.recado{margin-top:16px;background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:10px;padding:12px 14px;font-size:16px;line-height:1.45}
 .guardar{margin-top:16px;background:var(--accent-soft);border-radius:var(--radius);padding:16px}
 .guardar .lk{font-size:14px;word-break:break-all;background:var(--paper);border-radius:8px;padding:8px 10px;color:var(--ink-2)}
 .gbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
@@ -599,19 +600,16 @@ function renderFinal(){
   app.innerHTML = `<div class="res">
     <div class="eyebrow">Sua máscara principal</div>
     <h1>${esc(p.n)}</h1>
-    <p class="lead" style="margin-top:4px">O que ela evita: <b>${esc(p.ev)}</b>.</p>
-    <div class="anchor"><div class="k">A frase pra manter na cabeça</div><div class="f">“${esc(p.an)}”</div></div>
-    <p class="muted" style="margin:0">Ela tem um episódio só dela no VedantaCast: o episódio ${p.ep} de Removendo as Máscaras.</p>
+    <p class="muted" style="margin:4px 0 0">Ela tem um episódio só dela no VedantaCast: o episódio ${p.ep} de Removendo as Máscaras.</p>
     ${R.note?`<div class="note">${esc(R.note)}</div>`:""}
-    <div class="sec"><h3>O mapa da sua máscara</h3>${mapaHTML(R.principal, false)}</div>
+    <div class="recado"><b>Guarda este mapa.</b> No fim da aula a gente não vai ler o de cada um. O seu está aqui embaixo: tira um print ou guarda o link no final do mapa.</div>
+    <div class="sec"><h3>O mapa da sua máscara</h3>${mapaHTML(R.principal, true)}</div>
     ${guardarHTML(R.principal)}
     ${ap?`<div class="sec"><div class="eyebrow">De apoio</div><h3 style="font-size:24px;margin:4px 0 2px">${esc(ap.n)}</h3>
       <p class="muted" style="margin:0 0 6px">Evita ${esc(ap.ev)}. Episódio ${ap.ep}.</p>
-      <div class="note" style="margin-top:6px">“${esc(ap.an)}”</div>
-      <details class="mais"><summary>Ver o mapa completo</summary>${mapaHTML(R.apoio, false)}<p class="muted">Link: <a class="link" style="padding:0" href="${mapaLink(R.apoio)}">${esc(mapaLink(R.apoio))}</a></p></details></div>`:""}
+      <div class="note" style="margin-top:6px">“${esc(ap.an)}”</div></div>`:""}
     ${ex?`<div class="sec"><div class="eyebrow">Você também se vê em</div><h3 style="font-size:22px;margin:4px 0 2px">${esc(ex.n)}</h3>
-      <div class="note" style="margin-top:6px">“${esc(ex.an)}”</div>
-      <details class="mais"><summary>Ver o mapa completo</summary>${mapaHTML(R.extra, false)}<p class="muted">Link: <a class="link" style="padding:0" href="${mapaLink(R.extra)}">${esc(mapaLink(R.extra))}</a></p></details></div>`:""}
+      <div class="note" style="margin-top:6px">“${esc(ex.an)}”</div></div>`:""}
     <div class="sec"><h3>Suas máscaras, de perto</h3><div class="card">${barsHTML(R.scores, R.rank)}</div></div>
     <div class="sec"><h3>Como a sala está até agora</h3><div class="card" id="sala"><p class="muted" style="margin:0">Carregando…</p></div></div>
     <p class="muted" id="sendMsg" style="margin-top:18px">Ninguém vê a sua resposta individual — só o gráfico do grupo.</p>
